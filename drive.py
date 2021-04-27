@@ -78,6 +78,10 @@ class Driver:
         except:
             return self.r.getPositionTup()
         '''
+
+    def pickup(self,color):
+        # input the code from lab 5 here
+
 # pid
 def pid_speed(self,kp, ki, kd, error, old_error, error_list):
     # add the error to the integral portion
