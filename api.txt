@@ -5,3 +5,6 @@ used for action planning commands
 tb12.drive(string node)
 tb12.pickup(string color)
 tb12.putdown(string color)
+
+astar node: distance
+astar heuristic: baloon start-end/2
