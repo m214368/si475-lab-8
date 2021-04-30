@@ -8,3 +8,21 @@ tb12.putdown(string color)
 
 astar node: distance
 astar heuristic: baloon start-end/2
+
+locations stored as (x,y)
+
+Ryan
+state: string representation of node 
+heuristic: heuristic value of node
+weight: weight from most recent parent
+action: action to get here
+parent: pointer to parent node
+
+John
+a*star search
+generate children
+reading in json
+
+drive(x,y):
+remove(location[robot],location[carrying[0]],location[carrying[1]])
+add(location[robot],location[carrying[0]],location[carrying[1]])
