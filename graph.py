@@ -1,5 +1,6 @@
 import numpy as np
 import math
+import json
 from copy import deepcopy
 from tb12 import tb12
 from priqueue import PriQue
@@ -20,8 +21,7 @@ def closest(n, N):
 
 class Node:
     #goals:dictionary mapping robot,green,purple,blue,red to string locations
-    goals
-    seen = dict()
+    goals = dict()
     def __init__(self,start=None,end=None):
         #parent:pointer to parent
         self.parent = None
@@ -46,7 +46,7 @@ class Node:
         node.carry = self.carry
         node.parent = self
         node.location[robot] = place
-        for i in node.carry
+        for i in node.carry:
             node.location[i] = place
         node.weight = tb12.path(self.location[robot],place)
         return node
@@ -75,12 +75,16 @@ class Node:
         return node
 
     def generate_children(self):
+        childs = []
         #marks the first node as seen
         if self.parent == None:
             seen[self.state] = True
         #pickup all, putdown all, drive to balloons, drive to goals
         for i in self.location:
+	    #create node
             temp = self.drive(i)
+            #add node to our list
+	    childs.append(temp)
             #this logic goes into the graph side
             '''
                 if not temp.seen(): #should really just reduce the priqueue value of the seen
@@ -89,6 +93,7 @@ class Node:
             '''
         for i in goals:
             temp = self.drive(i)
+            childs.append(temp)
             #this logic goes into the graph side
             '''
                 if not temp.seen():
@@ -97,7 +102,8 @@ class Node:
             '''
         for key,value in self.location.items():
             if value == location['robot'] and key != 'robot':
-                temp = self.pickup(value)
+                temp = self.pickup(key)
+                childs.append(temp)
                 #this logic goes into the graph side
                 '''
                 if not temp.seen():
@@ -106,20 +112,22 @@ class Node:
                 '''
         for i in self.carry:
             temp = self.putdown(i)
+            childs.append(temp)
             #this logic goes into the graph side
             '''
             if not temp.seen():
                 priority queue add temp #should really just reduce the priqueue value of the seen
                 seen[temp.state] = True
             '''
+        return childs
 
     def state(self):
         self.state = ""
         for key,value in sorted(self.location.items()):
             self.state += str(value)
-        for key,value in sorted(self.carry.items()):
+        for key,value in sorted(self.carry):
             self.state += str(value)
-        print(self.state)
+        return self.state
 
     def seen(self):
         return self.state in seen.keys()
@@ -131,65 +139,52 @@ class Node:
         h = h/2
         return h
 
+
 class Graph:
     def __init__(self):
-        self.vert = []
-        self.adj_mtrx = []
-        self.label_to_i = {}
         self.start = None
         self.goal = None
 
-    def build_from_dot(self,filename,startx,starty,goalx,goaly):
-        f = open(filename)
-        f.readline()
-        edges = set()
-        for line in f:
-            line1 = line.split('[')
-            line2 = line.split('--')
-            if len(line1)==2:
-                name = line1[0].replace(' ','')
-                points = line1[1].split('"')[1]
-                points = points.split(',')
-                x = float(points[0].replace('(',''))
-                y = float(points[1].replace(')',''))
-                self.label_to_i[name] = len(self.vert)
-                self.vert.append(Node(name,x,y))
-            if len(line2)==2:
-                edges.add((line2[0].strip(),
-                    line2[1].replace(';','').strip()))
+startFile = raw_input("Enter Starting State JSON File: ")
+endFile = raw_input("Enter Ending State JSON File: ")
 
-        start = Node('start',startx,starty)
-        goal = Node('goal',goalx,goaly)
-        edges.add(('start',closest(start,self.vert)))
-        edges.add(('goal',closest(goal,self.vert)))
-        self.label_to_i['start'] = len(self.vert)
-        self.vert.append(start)
-        self.label_to_i['goal'] = len(self.vert)
-        self.vert.append(goal)
+with open(startFile) as json_file:
+  startLoc = json.load(json_file)
 
-        self.adj_mtrx = np.zeros((len(self.vert),len(self.vert)))-1
-        for e in edges:
-            i = self.label_to_i[e[0]]
-            j = self.label_to_i[e[1]]
-            d = dist(self.vert[i],self.vert[j])
-            self.adj_mtrx[i][j] = d
-            self.adj_mtrx[j][i] = d
+with open(endFile) as json_file:
+  endLoc = json.load(json_file)
 
-        #print(self.vert)
-        #print(self.adj_mtrx)
 
-        f.close()
+startN = Node(startLoc, endLoc)
+seen = dict()
+startN.weight = 0
+cur = startN
+pq = PriQue()
+#A* search stuff
+while cur.location != startN.goal:
+  for next in cur.generate_children():
+    if not next.seen():
+      next.weight = cur.weight + #cost?
+      pq.append(next.weight + next.heuristic(), next)
+      seen.append(next.state)
+    else:
+     if next.weight > cur.weight + #cost?:
+       next.weight = cur.weight + #cost
+       pq.changePriority(next.weight + next.heuristic(), next)
+       
+  cur =  pq.getMin()
 
-    def get_neighbors(self, vertex):
-        nbrs = []
-        row = self.adj_mtrx[self.label_to_i[vertex.label]]
-        for i in range(len(row)):
-            if row[i] != -1:
-                nbrs.append((self.vert[i],row[i]))
-        return nbrs
+path = []
+#get path
+path.insert(0, cur.action)
+while cur.parent != None:
+  path.insert(0, cur.parent.action)
+  cur = cur.parent
 
-    def get_start(self):
-        return self.vert[-2]
+print path
+      
 
-    def get_goal(self):
-        return self.vert[-1]
+
+
+
+
