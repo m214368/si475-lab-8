@@ -55,11 +55,11 @@ class tb12:
             G.add_edge(key,bestnode[0],weight=best)
         nx.set_edge_attributes(G, values = 1, name = 'weight')
         g = nx.Graph()
-        startmap["ROBOT"] = "(14,13)"
         try:
             start = startmap["ROBOT"]
         except:
-            start = driver.start()
+            start = "(14,13)"
+            #start = driver.start()
         s1 = "\""+str(start)+"\""
         best = 100
         bestnode = 0

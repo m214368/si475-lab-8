@@ -49,7 +49,7 @@ class PriQue(object):
             else:
                 break
         if (spot * 2 < len(self.queue) and self.compareIndexes(spot, spot * 2) == 1):
-            self.swapIndexes(spot, spot2)
+            self.swapIndexes(spot, spot * 2)
         return temp
 
     #Returns the number of elements in the priority queue

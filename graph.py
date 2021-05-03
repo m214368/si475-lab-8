@@ -32,7 +32,7 @@ class Node:
         #carry:list mapping 0,1 to balloons on the robot
         self.carry = list()
         #string representation of the state
-        self.state = self.state()
+        self.state = self.State()
         print(self.state)
         #goals:dictionary mapping of end states
         if (end is not None):
@@ -48,7 +48,8 @@ class Node:
         node.carry = self.carry
         node.parent = self
         node.location['ROBOT'] = node.location[place]
-        print(node.location['ROBOT'])
+        #print(node.location['ROBOT'])
+        #print(node.carry)
         for i in node.carry:
             node.location[i] = place
         quarterback = tb12(self.location,self.goals)
@@ -61,10 +62,11 @@ class Node:
         node.action = "pickup " + color
         node.carry = self.carry
         node.parent = self
-        node.carry.insert(color)
+        node.carry.insert(0,color)
         node.carry.sort()
         node.weight = 3
-        node.state = node.state()
+        node.state = node.State()
+        #print("pickup")
         return node
 
     def putdown(self,color):
@@ -74,12 +76,13 @@ class Node:
         node.parent = self
         node.carry.remove(color)
         node.weight = 3
-        node.state = node.state()
+        node.state = node.State()
         return node
 
     def generate_children(self):
         childs = list()   
         #pickup all, putdown all, drive to balloons, drive to goals
+        print(self.location)
         for i in self.location:
             temp = self.drive(i)
             childs.append(temp)
@@ -87,21 +90,23 @@ class Node:
             temp = self.drive(i)
             childs.append(temp)
         for key,value in self.location.items():
-            if value == self.location['ROBOT'] and key != 'ROBOT':
+            print("value: "+str(value))
+            print("Robot:"+str(self.location["ROBOT"]))
+            if value==self.location["ROBOT"] and key != 'ROBOT':
                 temp = self.pickup(key)
                 childs.append(temp)
         for i in self.carry:
             temp = self.putdown(i)
             childs.append(temp)
-        print(childs)
+        #print(childs)
         return childs
 
-    def state(self):
+    def State(self):
         self.state = ""
         for key,value in sorted(self.location.items()):
             self.state += str(key)+":"+str(value)
-        for key,value in sorted(self.carry):
-            self.state += str(value)
+        for value in sorted(self.carry):
+            self.state += "carrying:"+str(value)
         return self.state
 
     def heuristic(self):
@@ -122,19 +127,23 @@ class Graph:
             startLoc = json.load(json_file)
         with open(endFile) as json_file:
             endLoc = json.load(json_file)
+        startL = dict()
+        endL = dict()
         for key,value in startLoc.items():
-            startLoc[key]=str(value)
+            startL[str(key.encode('ascii','ignore'))]=str(value)
         for key,value in endLoc.items():
-            endLoc[key]=str(value)
-        startN = Node(startLoc, endLoc)
-        goal = Node(endLoc,endLoc)
+            endL[str(key.encode('ascii','ignore'))]=str(value)
+        startL['ROBOT'] = "(14,13)"
+        endL['ROBOT'] = "(14,13)"
+        startN = Node(startL, endL)
+        goal = Node(endL,endL)
         seen = dict()
         cur = startN
         pq = PriQue()
         #A* search stuff
         while cur.state != goal.state:
             for next in cur.generate_children():
-                if next.state not in seen or True:
+                if next.state not in seen:
                     pq.insert(next.weight + next.heuristic(), next)
                     seen[next.state] = next.weight + next.heuristic()
                 #else:
