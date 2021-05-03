@@ -41,11 +41,11 @@ class PriQue(object):
         while ( (spot * 2)+1 < len(self.queue) ):
             if ( (self.compareIndexes(spot, spot * 2) == 1) or (self.compareIndexes(spot, (spot * 2)+1) == 1) ): #it's a minQueue
                 if (self.compareIndexes(spot * 2, (spot * 2)+1) == -1):
-                    self.swapIndexes(spot, spot 2)
-                    spot = spot 2
+                    self.swapIndexes(spot, spot * 2)
+                    spot = spot* 2
                 else:
                     self.swapIndexes(spot, (spot * 2)+1)
-                    spot = (spot 2)+1
+                    spot = (spot* 2)+1
             else:
                 break
         if (spot * 2 < len(self.queue) and self.compareIndexes(spot, spot * 2) == 1):
@@ -68,11 +68,11 @@ class PriQue(object):
             while ( (spot * 2)+1 < len(self.queue) ):
                 if (self.compareIndexes(spot, spot * 2) == 1 or self.compareIndexes(spot, (spot * 2)+1) == 1): #it's a minQueue
                     if (self.compareIndexes(spot * 2, (spot * 2)+1) == -1):
-                        self.swapIndexes (spot, spot 2)
-                        spot = spot 2
+                        self.swapIndexes (spot, spot*2)
+                        spot = spot*2
                     else :
                         self.swapIndexes (spot, (spot * 2)+1)
-                        spot = (spot 2)+1
+                        spot = (spot*2)+1
             if (spot * 2 < len(self.queue) and self.compareIndexes(spot, spot * 2) == -1):
                 self.swapIndexes(spot, spot2)
         if (oldPriority > updatedPriority): # move it towards start of array

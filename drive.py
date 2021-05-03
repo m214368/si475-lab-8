@@ -28,14 +28,14 @@ class Driver:
             except:
                 current_pos = self.r.getPositionTup()
             '''
-            print('current pos: ' + str(current_pos))
+            #print('current pos: ' + str(current_pos))
             current_angle = current_pos[2]
 
             #calculate the goal angle
             relative_x = goal_pos[0]-current_pos[0]
             relative_y = goal_pos[1]-current_pos[1]
             goal_angle = math.atan2(relative_y, relative_x)
-            print('goal angle: ' + str(goal_angle))
+            #print('goal angle: ' + str(goal_angle))
             #break if within .1 m
             if (posDiff(current_pos, goal_pos) < .5 ):
                 break
@@ -43,7 +43,7 @@ class Driver:
             #calculate angle speed and lin speed drive
             ang_error = angleDiff(current_angle, goal_angle)
             pos_error = posDiff(current_pos, goal_pos)
-            print('error: ' + str(ang_error) + ' ' +str(pos_error))
+            #print('error: ' + str(ang_error) + ' ' +str(pos_error))
 
             #speed
             ang_speed = pid_speed(-.5, 0, -.01, ang_error, old_ang_error, self.error_list_angle)
@@ -60,13 +60,13 @@ class Driver:
                 ang_speed = -turn_limit
 
             self.r.drive(angSpeed=ang_speed, linSpeed=lin_speed)
-            print('speed: ' + str(ang_speed) + ' ' + str(lin_speed))
+            #print('speed: ' + str(ang_speed) + ' ' + str(lin_speed))
 
             #set old values
             old_ang_error=ang_error
             old_pos_error=pos_error
             rate.sleep()
-            print(' ')
+            #print(' ')
 
         self.r.drive(angSpeed=0, linSpeed=0)
 
