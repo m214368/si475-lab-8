@@ -154,7 +154,8 @@ with open(startFile) as json_file:
 with open(endFile) as json_file:
   endLoc = json.load(json_file)
 
-
+quarterback = tb12(startLoc,endLoc)
+start['ROBOT'] = tb12.start()
 startN = Node(startLoc, endLoc)
 seen = dict()
 startN.weight = 0

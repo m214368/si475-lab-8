@@ -80,23 +80,23 @@ class Driver:
         '''
 
     def pickup(self,color):
-        if color == 'green':
+        if color == 'GREEN':
             light = (40,15,20)
             dark = (80,255,235)
 
-        if color == 'purple':
+        if color == 'PURPLE':
             light = (140,15,20)
             dark = (165,255,235)
 
-        if color == 'red':
+        if color == 'RED':
             light = (0,20,50)
             dark = (8,255,235)
 
-        if color == 'yellow':
+        if color == 'YELLOW':
             light = (25,15,20)
             dark = (40,255,235)
 
-        if color == 'blue':
+        if color == 'BLUE':
             light = (105,0,0)
             dark = (115,255,255)
 
@@ -184,13 +184,13 @@ def get_dist_err(dens,P=.5):
     return P*(921600-dens)
 
 def augmentedImg(image, mask, color):
-    if color == 'blue' or color == 'pink':
+    if color == 'BLUE' or color == 'PINK':
         # apply blue filter
         image[:,:,0] = np.bitwise_or(image[:,:,0], mask)
-    if color == 'yellow' or color == 'green':
+    if color == 'YELLOW' or color == 'GREEN':
         # apply green filter
         image[:,:,1] = np.bitwise_or(image[:,:,1], mask)
-    if color == 'pink' or color == 'red' or color == 'yellow':
+    if color == 'PINK' or color == 'RED' or color == 'YELLOW':
         # apply red filter
         image[:,:,2] = np.bitwise_or(image[:,:,2], mask)
 
