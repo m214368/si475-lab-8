@@ -112,8 +112,8 @@ class Rob:
 class Searcher:
     def search(self):
         #start file
-        startFile = "babys.json"
-        endFile = "babye.json"
+        startFile = "start.json"
+        endFile = "harder.json"
         with open(startFile) as json_file:
             startLoc = json.load(json_file)
         with open(endFile) as json_file:
@@ -141,6 +141,7 @@ class Searcher:
         path = []
         #get path
         path.insert(0, cur.action)
+        cur = cur.parent
         while cur.parent is not None:
             path.insert(0, cur.action)
             cur = cur.parent
