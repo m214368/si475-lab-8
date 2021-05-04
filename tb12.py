@@ -29,63 +29,65 @@ def xy(s1):
 
 
 class tb12:
-    driver = Driver()
-    def __init__(self,startmap,endmap):
+    def __init__(self):
+	#self.driver = Driver()
 	self.path = None
         filename = "map.dot"
         G = nx.drawing.nx_pydot.read_dot(filename)
         g = G.__class__()
         g.add_nodes_from(G.nodes(data=True))
         g.add_edges_from(G.edges)
-        #for key,value in startmap.items():
-        #    G.add_node(str(key),label=value)
-        #    best = 100
-        #    bestnode = 0
-        #    for n in list(g.nodes(data=True)):
-        #        if (subtract(n[1]['label'],str(value)) < best):
-        #            best = subtract(n[1]['label'],str(value))
-        #            bestnode = n
-        #    G.add_edge(key,bestnode[0],weight=best)
-        #for key,value in endmap.items():
-        #    G.add_node(str(key)+"_END",label=value)
-        #    best = 100
-        #    bestnode = 0
-        #    for n in list(g.nodes(data=True)):
-        #        if (subtract(n[1]['label'],str(value)) < best):
-        #            best = subtract(n[1]['label'],str(value))
-        #            bestnode = n
-        #    G.add_edge(key,bestnode[0],weight=best)
         nx.set_edge_attributes(G, values = 1, name = 'weight')
         g = nx.Graph()
-        #try:
-        #    start = self.driver.r.getMCLPose()
-        #except:
-        #    start = "(14,13)"
-            #start = driver.start()
-        #s1 = "\""+str(start)+"\""
-        #best = 100
-        #bestnode = 0
-        #for n in list(G.nodes(data=True)):
-        #    g.add_node(n[0],label = n[1]['label'])
-        #    if (subtract(n[1]['label'],s1) < best):
-        #        best = subtract(n[1]['label'],s1)
-        #        bestnode = n
-        #for e in list(G.edges()):
-        #    g.add_edge(e[0],e[1],weight=subtract(G.nodes[e[0]]['label'],G.nodes[e[1]]['label']))
-        #g.add_node("ROBOT",label=s1)
-        #g.add_edge("ROBOT",bestnode[0],weight=best)
-        #G = g
+        for n in list(G.nodes(data=True)):
+            g.add_node(n[0],label = n[1]['label'])
+        for e in list(G.edges()):
+            g.add_edge(e[0],e[1],weight=subtract(G.nodes[e[0]]['label'],G.nodes[e[1]]['label']))
+        G = g
         self.graph = G
 
     def path(self,start,end):
         length, path = nx.single_source_dijkstra(self.graph,start,target=end,weight='weight')
         return(length)
 
-    def drive(self,start, end):
-        length, path = nx.single_source_dijkstra(self.graph,start,target=end,weight='weight')
+    def drive(self,x,y):
+	G = self.graph
+	g = G.__class__()
+	#add start and end nodes to graph
+	beststart = 100
+        beststartnode = 0
+	#start = self.driver.start()
+	start = (0,0)
+        s1 = "\""+str(start)+"\""
+        bestend = 100
+        bestendnode = 0
+        e1 = "\""+str(x)+","+str(y)+"\""
+        for n in list(G.nodes(data=True)):
+            print(n)
+            g.add_node(n[0],label = n[1]['label'])
+            if (subtract(n[1]['label'],s1) < beststart):
+                beststart = subtract(n[1]['label'],s1)
+                beststartnode = n
+            if (subtract(n[1]['label'],e1) < bestend):
+                bestend = subtract(n[1]['label'],e1)
+                bestendnode = n
+        for e in list(G.edges()):
+            g.add_edge(e[0],e[1],weight=subtract(G.nodes[e[0]]['label'],G.nodes[e[1]]['label']))
+        g.add_node("start",label=s1)
+        g.add_edge("start",beststartnode[0],weight=beststart)
+        g.add_node("end",label=e1)
+        g.add_edge("end",bestendnode[0],weight=bestend)
+        G=g
+        pos=nx.spring_layout(G) # pos = nx.nx_agraph.graphviz_layout(G)
+        nx.draw_networkx(G,pos)
+        labels = nx.get_edge_attributes(G,'weight')
+        nx.draw_networkx_edge_labels(G,pos,edge_labels=labels)
+        plt.show()
+        
+        length, path = nx.single_source_dijkstra(g,'start',target="end",weight='weight')
         for i in path:
             x,y = xy(self.graph.nodes[i]['label'])
-            self.driver.goto(x,y)
+            #self.driver.goto(x,y)
 
     def start(self):
         return self.driver.start()
