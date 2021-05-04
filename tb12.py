@@ -9,7 +9,7 @@ from math import pow, sqrt
 import argparse
 import networkx as nx
 import matplotlib.pyplot as plt
-from drive import Driver
+#from drive import Driver
 from copy import deepcopy
 import re
 import time
@@ -30,8 +30,8 @@ def xy(s1):
 
 class tb12:
     def __init__(self):
-	#self.driver = Driver()
-	self.path = None
+        #self.driver = Driver()
+        self.path = None
         filename = "map.dot"
         G = nx.drawing.nx_pydot.read_dot(filename)
         g = G.__class__()
@@ -51,13 +51,13 @@ class tb12:
         return(length)
 
     def drive(self,x,y):
-	G = self.graph
-	g = G.__class__()
-	#add start and end nodes to graph
-	beststart = 100
+        G = self.graph
+        g = G.__class__()
+        #add start and end nodes to graph
+        beststart = 100
         beststartnode = 0
-	#start = self.driver.start()
-	start = (0,0)
+        #start = self.driver.start()
+        start = (0,0)
         s1 = "\""+str(start)+"\""
         bestend = 100
         bestendnode = 0
@@ -78,26 +78,25 @@ class tb12:
         g.add_node("end",label=e1)
         g.add_edge("end",bestendnode[0],weight=bestend)
         G=g
-        pos=nx.spring_layout(G) # pos = nx.nx_agraph.graphviz_layout(G)
-        nx.draw_networkx(G,pos)
-        labels = nx.get_edge_attributes(G,'weight')
-        nx.draw_networkx_edge_labels(G,pos,edge_labels=labels)
-        plt.show()
-        
+        #pos=nx.spring_layout(G) # pos = nx.nx_agraph.graphviz_layout(G)
+        #nx.draw_networkx(G,pos)
+        #labels = nx.get_edge_attributes(G,'weight')
+        #nx.draw_networkx_edge_labels(G,pos,edge_labels=labels)
         length, path = nx.single_source_dijkstra(g,'start',target="end",weight='weight')
         for i in path:
-            x,y = xy(self.graph.nodes[i]['label'])
+            print(i)
+            x,y = xy(g.nodes[i]['label'])
             #self.driver.goto(x,y)
 
     def start(self):
         return self.driver.start()
 
     def pickup(self,color):
-        self.driver.pickup(color)
-	print("pick up " + color + " balloon.")
-	#wait a few secs then proceed
-	time.sleep(2)
+        #self.driver.pickup(color)
+        print("pick up " + color + " balloon.")
+        #wait a few secs then proceed
+        time.sleep(2)
 
     def putdown(self,color):
         print("put down " + color + " balloon.")
-	time.sleep(2)
+        time.sleep(2)
