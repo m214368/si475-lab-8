@@ -7,7 +7,7 @@ class Driver:
         self.r = robot()
         self.error_list_pos = []
         self.error_list_angle = []
-        
+
     def goto(self,x,y):
         goal_pos = (x, y)
 
@@ -22,12 +22,7 @@ class Driver:
 
             #current pos
             current_pos = self.r.getMCLPose()
-            '''
-            try:
-                current_pos = self.r.getMCLPose()
-            except:
-                current_pos = self.r.getPositionTup()
-            '''
+
             #print('current pos: ' + str(current_pos))
             current_angle = current_pos[2]
 
@@ -72,12 +67,6 @@ class Driver:
 
     def start(self):
         return self.r.getMCLPose()
-        '''
-        try:
-            return self.r.getMCLPose()
-        except:
-            return self.r.getPositionTup()
-        '''
 
     def pickup(self,color):
         if color == 'GREEN':
@@ -121,9 +110,9 @@ class Driver:
             if bDist < 750 and bDist >0:
                 count += 1
                 if (count>1):
-                    break   
+                    break
             else:
-                count = 0 
+                count = 0
             ros.sleep()
         self.r.drive(angSpeed=0, linSpeed=0)
 
@@ -253,4 +242,4 @@ def getBalloonDist(mask, depth):
             xx += 1
     if numPixels == 0:
         return 10000
-    return totDist/numPixels    
+    return totDist/numPixels
