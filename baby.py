@@ -21,7 +21,7 @@ class Node:
         self.goals = goals
         self.parent = None
         self.action = None
-        self.weight = 7
+        self.weight = 0
         self.robot = robot
 
     def drive(self, place, locs):
@@ -39,7 +39,7 @@ class Node:
         node = Node(deepcopy(self.locations), deepcopy(self.goals), deepcopy(self.robot))
         node.action = "pickup " + color
         node.robot.pickup(color)
-        node.weight = 3
+        node.weight = 0
         node.parent = self
         return node
 
@@ -48,7 +48,7 @@ class Node:
         node.action = "putdown " + color
         node.robot.putdown(color)
         node.locations[color] = node.robot.loc
-        node.weight = 3
+        node.weight = 0
         node.parent = self
         return node
 
@@ -126,8 +126,8 @@ class Searcher:
             endLoc = json.load(json_file)
 	bot = tb12()
 	#get starting location of robot
-        #startRob = bot.driver.start()
-	start = (0,0)
+        startRob = bot.driver.start()
+	#start = (0,0)
 	#only need to get x,y
         robot = Rob(start)
         startN = Node(startLoc, endLoc, robot)
@@ -149,6 +149,7 @@ class Searcher:
         while cur.parent is not None:
             path.insert(0, cur.action)
             cur = cur.parent
+        print path
         return path
     
 s = Searcher()

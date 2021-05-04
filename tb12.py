@@ -30,7 +30,7 @@ def xy(s1):
 
 class tb12:
     def __init__(self):
-        #self.driver = Driver()
+        self.driver = Driver()
         self.path = None
         filename = "map.dot"
         G = nx.drawing.nx_pydot.read_dot(filename)
@@ -56,8 +56,8 @@ class tb12:
         #add start and end nodes to graph
         beststart = 100
         beststartnode = 0
-        #start = self.driver.start()
-        start = (0,0)
+        start = self.driver.start()
+        #start = (0,0)
         s1 = "\""+str(start)+"\""
         bestend = 100
         bestendnode = 0
@@ -86,13 +86,13 @@ class tb12:
         for i in path:
             print(i)
             x,y = xy(g.nodes[i]['label'])
-            #self.driver.goto(x,y)
+            self.driver.goto(x,y)
 
     def start(self):
         return self.driver.start()
 
     def pickup(self,color):
-        #self.driver.pickup(color)
+        self.driver.pickup(color)
         print("pick up " + color + " balloon.")
         #wait a few secs then proceed
         time.sleep(2)
