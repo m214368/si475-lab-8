@@ -102,7 +102,7 @@ alias wb='roslaunch turtlebot_gazebo turtlebot_world.launch world_file:=/home/ad
 alias rc='roslaunch freenect_launch freenect.launch'
 alias nav='roslaunch turtlebot_navigation amcl_demo.launch map_file:=/home/administrator/turtleAPI/map.yaml'
 alias vnav='roslaunch turtlebot_rviz_launchers view_navigation.launch --screen'
-
+alias setup='curl https://www.usna.edu/Users/cs/taylor/courses/si475/resources/mapper.innocuous | bash'
 #turtle alias
 source /opt/ros/indigo/setup.bash
 source ~/catkin_ws/install_isolated/setup.bash
