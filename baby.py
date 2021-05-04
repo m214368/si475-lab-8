@@ -4,6 +4,10 @@ import json
 from copy import deepcopy
 from tb12 import tb12
 from priqueue import PriQue
+
+def dist(n1,n2):
+    return math.sqrt((n1[0]-n2[0])**2 +(n1[1]-n2[1])**2)
+
 class Node:
   def __init__(self, start, goals, robot):
 	self.locations = start
@@ -40,6 +44,13 @@ class Node:
 	node.weight = 3
 	node.parent = self
 	return node
+
+  def heuristic(self):
+    h = 0
+    for key,value in self.goals.items():
+      h+=dist(value,self.locations[key])
+    h = h/2
+    return h
 	
   def generate_children(self):
 	childs = list()
@@ -124,7 +135,7 @@ class Searcher:
 	    print next.RState()
 	    
 	    if next.State() not in seen:
-		pq.insert(next.weight, next)
+		pq.insert(next.weight+next.heuristic(), next)
                 seen[next.State()] = next.weight;
 	  cur = pq.getMin()
 	  print "*******"
