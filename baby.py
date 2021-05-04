@@ -105,14 +105,16 @@ class Rob:
     def pickup(self, color):
         self.carrying.append(color)
     def putdown(self, color):
+        print("Putting down "+str(color))
         self.carrying.remove(color) 
+        print(self.carrying)
 
 
 class Searcher:
     def search(self):
         #start file
-        startFile = "start.json"
-        endFile = "simple.json"
+        startFile = "babys.json"
+        endFile = "babye.json"
         with open(startFile) as json_file:
             startLoc = json.load(json_file)
         with open(endFile) as json_file:
@@ -125,15 +127,15 @@ class Searcher:
         cur = deepcopy(startN)
         pq = PriQue()
         while cur.State() != startN.goalState():
-            print cur.RState()
-            print cur.heuristic()
+            print "Cur:"+str(cur.RState())
+            print "CurHur:"+str(cur.heuristic())
             print "//////////"
             for next in cur.generate_children():
             #print next.action
-               print next.RState()
-            if next.State() not in seen:
-                pq.insert(next.weight+next.heuristic(), next)
-                seen[next.State()] = next.weight
+                print next.RState()
+                if next.State() not in seen:
+                    pq.insert(next.weight+next.heuristic(), next)
+                    seen[next.State()] = next.weight
             cur = pq.getMin()
             print "*******"
 
