@@ -57,6 +57,7 @@ class tb12:
         beststart = 100
         beststartnode = 0
         start = self.driver.start()
+	print start
         #start = (0,0)
         s1 = "\""+str(start)+"\""
         bestend = 100
