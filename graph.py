@@ -33,7 +33,7 @@ class Node:
         self.carry = list()
         #string representation of the state
         self.state = self.State()
-        print(self.state)
+        #print(self.state)
         #goals:dictionary mapping of end states
         if (end is not None):
             goals = end 
@@ -42,19 +42,21 @@ class Node:
         self.map = tb12(start,self.goals)
 
 
-    def drive(self,place): #place is a color or color_end
-        node = Node(deepcopy(self.location))
-        node.action = "drive " + place
+    def drive(self,place, locs): #place is a color or color_end
+        node = Node(deepcopy(self.location), deepcopy(self.goals))
+        node.action = "drive " + locs[place]
         node.carry = self.carry
         node.parent = self
-        node.location['ROBOT'] = node.location[place]
+        node.location['ROBOT'] = locs[place]
         #print(node.location['ROBOT'])
         #print(node.carry)
         for i in node.carry:
-            node.location[i] = place
+            node.location[i] = locs[place]
         quarterback = tb12(self.location,self.goals)
         node.weight = quarterback.path('ROBOT',place)
         node.weight += self.weight
+	#print "drive"
+	#print node.location
         return node
 
     def pickup(self,color):
@@ -67,6 +69,7 @@ class Node:
         node.weight = 3
         node.state = node.State()
         #print("pickup")
+	#print node.State()
         return node
 
     def putdown(self,color):
@@ -77,27 +80,30 @@ class Node:
         node.carry.remove(color)
         node.weight = 3
         node.state = node.State()
+	#print "putdown"
         return node
 
-    def generate_children(self):
+    def generate_children(self, goals):
         childs = list()   
         #pickup all, putdown all, drive to balloons, drive to goals
-        print(self.location)
+        #print(self.location)
         for i in self.location:
-            temp = self.drive(i)
+            temp = self.drive(i, self.location)
+	    #print temp.location['ROBOT']
             childs.append(temp)
-        for i in self.goals:
-            temp = self.drive(i)
+        for i in goals:
+            temp = self.drive(i, goals)
             childs.append(temp)
-        for key,value in self.location.items():
-            print("value: "+str(value))
-            print("Robot:"+str(self.location["ROBOT"]))
-            if value==self.location["ROBOT"] and key != 'ROBOT':
-                temp = self.pickup(key)
-                childs.append(temp)
         for i in self.carry:
             temp = self.putdown(i)
             childs.append(temp)
+	for key,value in self.location.items():
+            #print("value: "+str(value))
+            #print("Robot:"+str(self.location["ROBOT"]))
+            if value==self.location["ROBOT"] and key != 'ROBOT':
+		#print key
+                temp = self.pickup(key)
+                childs.append(temp)
         #print(childs)
         return childs
 
@@ -120,9 +126,9 @@ class Node:
 class Graph:
     def __init__(self):
         #startFile = raw_input("Enter Starting State JSON File: ")
-        startFile = "start.json"
+        startFile = "start1.json"
         #endFile = raw_input("Enter Ending State JSON File: ")
-        endFile = "simple.json"
+        endFile = "simple1.json"
         with open(startFile) as json_file:
             startLoc = json.load(json_file)
         with open(endFile) as json_file:
@@ -133,25 +139,32 @@ class Graph:
             startL[str(key.encode('ascii','ignore'))]=str(value)
         for key,value in endLoc.items():
             endL[str(key.encode('ascii','ignore'))]=str(value)
-        startL['ROBOT'] = "(14,13)"
-        endL['ROBOT'] = "(14,13)"
+        startL['ROBOT'] = "[14,13]"
+        endL['ROBOT'] = "[14,13]"
         startN = Node(startL, endL)
         goal = Node(endL,endL)
+	#print goal.state
         seen = dict()
         cur = startN
         pq = PriQue()
+	print "/////////////////////////////"
         #A* search stuff
-        while cur.state != goal.state:
-            for next in cur.generate_children():
-                if next.state not in seen:
+        while cur.State() != goal.state:
+	    print cur.State()
+            print "////////////////////////////"
+            for next in cur.generate_children(goal.location):
+		#print next.State()
+		#print next.weight
+                if next.State() not in seen:
                     pq.insert(next.weight + next.heuristic(), next)
-                    seen[next.state] = next.weight + next.heuristic()
+                    seen[next.State()] = next.weight + next.heuristic()
                 #else:
-                #    if seen[next.state()] > next.weight + next.heuristic():
-                #        seen[next.state()] = next.weight + next.heuristic()
-                #        pq.changePriority(next.weight + next.heuristic(), next)
+                #    if seen[next.State()] > next.weight + next.heuristic():
+                #       seen[next.State()] = next.weight + next.heuristic()
+                #       pq.insert(next.weight + next.heuristic(), next)
                 #pq.printMe()
             cur =  pq.getMin()
+	    print "////////////"
         path = []
         #get path
         path.insert(0, cur.action)
