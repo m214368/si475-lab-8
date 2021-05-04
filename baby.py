@@ -62,16 +62,15 @@ class Node:
                 if self.locations[i] == self.robot.loc and i not in self.robot.carrying:
                     temp = self.pickup(i)
                     childs.append(temp)
-        else:
-            for i in self.robot.carrying:
-                if self.robot.loc is not self.goals[i]:
-                    temp = self.drive(i, self.goals)
-                    childs.append(temp)
-            for i in self.robot.carrying:
-                if self.goals[i] == self.robot.loc:
-                    print i
-                    temp = self.putdown(i)
-                    childs.append(temp)
+        for i in self.robot.carrying:
+            if self.robot.loc is not self.goals[i]:
+                temp = self.drive(i, self.goals)
+                childs.append(temp)
+        for i in self.robot.carrying:
+            if self.goals[i] == self.robot.loc:
+                print i
+                temp = self.putdown(i)
+                childs.append(temp)
         return childs
 
     def State(self):
