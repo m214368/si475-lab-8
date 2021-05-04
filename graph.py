@@ -36,7 +36,7 @@ class Node:
         #print(self.state)
         #goals:dictionary mapping of end states
         if (end is not None):
-            goals = end 
+            goals = end
         #value of the weight
         self.weight = 0
         self.map = tb12(start,self.goals)
@@ -55,8 +55,8 @@ class Node:
         quarterback = tb12(self.location,self.goals)
         node.weight = quarterback.path('ROBOT',place)
         node.weight += self.weight
-	#print "drive"
-	#print node.location
+        #print "drive"
+        #print node.location
         return node
 
     def pickup(self,color):
@@ -69,7 +69,7 @@ class Node:
         node.weight = 3
         node.state = node.State()
         #print("pickup")
-	#print node.State()
+        #print node.State()
         return node
 
     def putdown(self,color):
@@ -80,16 +80,16 @@ class Node:
         node.carry.remove(color)
         node.weight = 3
         node.state = node.State()
-	#print "putdown"
+        #print "putdown"
         return node
 
     def generate_children(self, goals):
-        childs = list()   
+        childs = list()
         #pickup all, putdown all, drive to balloons, drive to goals
         #print(self.location)
         for i in self.location:
             temp = self.drive(i, self.location)
-	    #print temp.location['ROBOT']
+        #print temp.location['ROBOT']
             childs.append(temp)
         for i in goals:
             temp = self.drive(i, goals)
@@ -97,11 +97,11 @@ class Node:
         for i in self.carry:
             temp = self.putdown(i)
             childs.append(temp)
-	for key,value in self.location.items():
+    for key,value in self.location.items():
             #print("value: "+str(value))
             #print("Robot:"+str(self.location["ROBOT"]))
             if value==self.location["ROBOT"] and key != 'ROBOT':
-		#print key
+                #print key
                 temp = self.pickup(key)
                 childs.append(temp)
         #print(childs)
@@ -143,18 +143,18 @@ class Graph:
         endL['ROBOT'] = "[14,13]"
         startN = Node(startL, endL)
         goal = Node(endL,endL)
-	#print goal.state
+        #print goal.state
         seen = dict()
         cur = startN
         pq = PriQue()
-	print "/////////////////////////////"
+    print "/////////////////////////////"
         #A* search stuff
         while cur.State() != goal.state:
-	    print cur.State()
+        print cur.State()
             print "////////////////////////////"
             for next in cur.generate_children(goal.location):
-		#print next.State()
-		#print next.weight
+                #print next.State()
+                #print next.weight
                 if next.State() not in seen:
                     pq.insert(next.weight + next.heuristic(), next)
                     seen[next.State()] = next.weight + next.heuristic()
@@ -164,7 +164,7 @@ class Graph:
                 #       pq.insert(next.weight + next.heuristic(), next)
                 #pq.printMe()
             cur =  pq.getMin()
-	    print "////////////"
+        print "////////////"
         path = []
         #get path
         path.insert(0, cur.action)
