@@ -129,7 +129,7 @@ class Searcher:
         startRob = bot.driver.start()
 	#start = (0,0)
 	#only need to get x,y
-        robot = Rob(start)
+        robot = Rob(startRob)
         startN = Node(startLoc, endLoc, robot)
         seen = dict()
         cur = deepcopy(startN)
