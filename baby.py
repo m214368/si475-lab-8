@@ -54,12 +54,12 @@ class Node:
 	
   def generate_children(self):
 	childs = list()
-	if len(self.robot.carrying) < 1:
+	if len(self.robot.carrying) < 2:
 	  for i in self.locations:
 		temp = self.drive(i, self.locations)
 		childs.append(temp)
 	  for i in self.locations:
-		if self.locations[i] == self.robot.loc:
+		if self.locations[i] == self.robot.loc and i not in self.robot.carrying:
 			temp = self.pickup(i)
 			childs.append(temp)
 	else:
@@ -114,8 +114,8 @@ class Rob:
 class Searcher:
     def search(self):
         #start file
-	startFile = "babys.json"
-	endFile = "babye.json"
+	startFile = "start.json"
+	endFile = "simple.json"
 	with open(startFile) as json_file:
             startLoc = json.load(json_file)
         with open(endFile) as json_file:
@@ -131,9 +131,8 @@ class Searcher:
 	  print cur.RState()
 	  print "//////////"
 	  for next in cur.generate_children():
-	    print next.action
+	    #print next.action
 	    print next.RState()
-	    
 	    if next.State() not in seen:
 		pq.insert(next.weight+next.heuristic(), next)
                 seen[next.State()] = next.weight;
@@ -144,7 +143,7 @@ class Searcher:
         #get path
         path.insert(0, cur.action)
         while cur.parent is not None:
-            path.insert(0, cur.parent.action)
+            path.insert(0, cur.action)
             cur = cur.parent
         print path
         return path
