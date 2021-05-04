@@ -68,7 +68,6 @@ class Node:
                 childs.append(temp)
         for i in self.robot.carrying:
             if self.goals[i] == self.robot.loc:
-                print i
                 temp = self.putdown(i)
                 childs.append(temp)
         return childs
@@ -104,9 +103,9 @@ class Rob:
     def pickup(self, color):
         self.carrying.append(color)
     def putdown(self, color):
-        print("Putting down "+str(color))
+        #print("Putting down "+str(color))
         self.carrying.remove(color) 
-        print(self.carrying)
+        #print(self.carrying)
 
 
 class Searcher:
@@ -118,25 +117,23 @@ class Searcher:
             startLoc = json.load(json_file)
         with open(endFile) as json_file:
             endLoc = json.load(json_file)
-
-        startRob = (0,0)
-        robot = Rob(startRob)
+	bot = tb12(startLoc, endLoc)
+	#get starting location of robot
+        startRob = bot.driver.r.getMCLPose()
+	#only need to get x,y
+	#start =
+        robot = Rob(start)
         startN = Node(startLoc, endLoc, robot)
         seen = dict()
         cur = deepcopy(startN)
         pq = PriQue()
         while cur.State() != startN.goalState():
-            print "Cur:"+str(cur.RState())
-            print "CurHur:"+str(cur.heuristic())
-            print "//////////"
             for next in cur.generate_children():
             #print next.action
-                print next.RState()
                 if next.State() not in seen:
                     pq.insert(next.weight+next.heuristic(), next)
                     seen[next.State()] = next.weight
             cur = pq.getMin()
-            print "*******"
 
         path = []
         #get path
@@ -145,11 +142,19 @@ class Searcher:
         while cur.parent is not None:
             path.insert(0, cur.action)
             cur = cur.parent
-        print path
-        return path
+	bot.path = path
+        return bot
     
     
 
 s = Searcher()
-s.search()
+bot = s.search()
+for i in bot.path:
+	next = i.string_split()
+	if next[0] == "drive":
+		bot.drive(bot.driver.r.getMCLPose(), next[1])
+	if next[0] == "pickup":
+		bot.pickup(next[1])
+	if next[0] == "putdown":
+		bot.putdown(next[1])
 

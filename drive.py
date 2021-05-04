@@ -187,11 +187,11 @@ def augmentedImg(image, mask, color):
 
 def getMask(light, dark, img):
     hsv_test = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-        mask = cv2.inRange(hsv_test, light, dark)
-        mask = cv2.fastNlMeansDenoising(mask, mask, 100, 7, 21)
-        ret, mask = cv2.threshold(mask, 127, 255, cv2.THRESH_BINARY)
+    mask = cv2.inRange(hsv_test, light, dark)
+    mask = cv2.fastNlMeansDenoising(mask, mask, 100, 7, 21)
+    ret, mask = cv2.threshold(mask, 127, 255, cv2.THRESH_BINARY)
     cv2.imshow('mask.jpg',mask)
-        cv2.waitKey(1)
+    cv2.waitKey(1)
     return mask
 
 def findCoM(light, dark, img, mask):
